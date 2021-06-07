@@ -33,14 +33,19 @@ namespace CafeSystem
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBox1 = new MetroFramework.Controls.MetroComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
+            this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
+            this.button2 = new MetroFramework.Controls.MetroButton();
+            this.button1 = new MetroFramework.Controls.MetroButton();
+            this.SaveLogsButton = new MetroFramework.Controls.MetroButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -67,6 +72,15 @@ namespace CafeSystem
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Главная";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // metroLabel1
+            // 
+            this.metroLabel1.AutoSize = true;
+            this.metroLabel1.Location = new System.Drawing.Point(3, 35);
+            this.metroLabel1.Name = "metroLabel1";
+            this.metroLabel1.Size = new System.Drawing.Size(147, 19);
+            this.metroLabel1.TabIndex = 1;
+            this.metroLabel1.Text = "Статус выбранного ПК";
             // 
             // metroComboBox1
             // 
@@ -106,21 +120,60 @@ namespace CafeSystem
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.SaveLogsButton);
+            this.tabPage3.Controls.Add(this.metroLabel2);
+            this.tabPage3.Controls.Add(this.button2);
+            this.tabPage3.Controls.Add(this.button1);
             this.tabPage3.Location = new System.Drawing.Point(4, 29);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(752, 367);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "tabPage3";
+            this.tabPage3.Text = "Настройки";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // metroLabel1
+            // metroLabel2
             // 
-            this.metroLabel1.AutoSize = true;
-            this.metroLabel1.Location = new System.Drawing.Point(3, 35);
-            this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(81, 19);
-            this.metroLabel1.TabIndex = 1;
-            this.metroLabel1.Text = "metroLabel1";
+            this.metroLabel2.AutoSize = true;
+            this.metroLabel2.Font = new System.Drawing.Font("Century Gothic", 21.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.metroLabel2.FontSize = MetroFramework.MetroLabelSize.Tall;
+            this.metroLabel2.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.metroLabel2.Location = new System.Drawing.Point(3, 12);
+            this.metroLabel2.Name = "metroLabel2";
+            this.metroLabel2.Size = new System.Drawing.Size(218, 25);
+            this.metroLabel2.TabIndex = 3;
+            this.metroLabel2.Text = "Отобразить базу данных:";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(511, 3);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(238, 43);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "Пользователи";
+            this.button2.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.button2.UseSelectable = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(267, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(238, 43);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "Компьютеры";
+            this.button1.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.button1.UseSelectable = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // SaveLogsButton
+            // 
+            this.SaveLogsButton.Location = new System.Drawing.Point(511, 52);
+            this.SaveLogsButton.Name = "SaveLogsButton";
+            this.SaveLogsButton.Size = new System.Drawing.Size(238, 43);
+            this.SaveLogsButton.TabIndex = 4;
+            this.SaveLogsButton.Text = "Сохранить логи";
+            this.SaveLogsButton.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.SaveLogsButton.UseSelectable = true;
+            this.SaveLogsButton.Click += new System.EventHandler(this.SaveLogsButton_Click);
             // 
             // MainForm
             // 
@@ -146,6 +199,8 @@ namespace CafeSystem
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -155,10 +210,14 @@ namespace CafeSystem
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private MetroFramework.Controls.MetroComboBox metroComboBox1;
         private MetroFramework.Controls.MetroLabel metroLabel1;
+        private System.Windows.Forms.TabPage tabPage3;
+        private MetroFramework.Controls.MetroButton button2;
+        private MetroFramework.Controls.MetroButton button1;
+        private MetroFramework.Controls.MetroLabel metroLabel2;
+        private MetroFramework.Controls.MetroButton SaveLogsButton;
     }
 }
 

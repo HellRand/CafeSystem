@@ -32,11 +32,15 @@ namespace CafeSystem.Structure
 
         public string GetDeviceString()
         {
-            string res = "Список подключенных устройств:\n";
+            string res = "";
 
+            if (ConnectedDevices.Count == 0) return "";
+            if (ConnectedDevices.Count == 1) return $"[{ConnectedDevices[0]}]";
             for (int i = 0; i < ConnectedDevices.Count; i++)
             {
-                res += $"{i+1}) {ConnectedDevices[i]}.\n";
+                if (i == 0) res += $"[{ConnectedDevices[i]}|";
+                else if (i == ConnectedDevices.Count - 1) res += $"{ConnectedDevices[i]}]";
+                else res += $"{ConnectedDevices[i]}|";
             }
 
             return res;
