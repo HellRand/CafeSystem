@@ -27,12 +27,13 @@ namespace CafeSystem
             InitializeComponent();
             _users = new List<User>();
             _computers = new List<Computer>();
-            LogBox.RTB = richTextBox1;
+
         }
 
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+
             #region Считывание объектов с CSV
             try
             {
@@ -47,7 +48,6 @@ namespace CafeSystem
                     foreach (Computer pc in records)
                     {
                         _computers.Add(pc);
-                        LogBox.Log($"{pc.Name} => Подключен.", LogBox.LogType.Succes);
                     }
                     //MessageBox.Show(test);
                 }
@@ -56,9 +56,9 @@ namespace CafeSystem
             
             #endregion
 
-            // Заносит пк в список объектов
+
             metroComboBox1.Items.AddRange(_computers.ToArray());
-            
+
             //.Text = $"Всего пк: {_computers.Count}.";
 
             #region Рандомные пк
@@ -76,9 +76,9 @@ namespace CafeSystem
             //}
             #endregion
 
-            TelegramBot bot = new TelegramBot();
-            metroLabel1.Hide();
 
+            Bot bot = new Bot();
+            
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -96,33 +96,8 @@ namespace CafeSystem
         private void metroComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (metroComboBox1.SelectedItem == null) return;
-            metroLabel1.Show();
-
             var selectedPc = metroComboBox1.SelectedItem as Computer;
             metroLabel1.Text = selectedPc.GetDeviceString();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            DatabaseShow dbShow = new DatabaseShow();
-            dbShow.Text = "База данных подключенных компьютеров.";
-            DataTable table = new DataTable();
-            table.Columns.AddRange(new DataColumn[] { new DataColumn("Название ПК"), new DataColumn("Подключенные устройства") });
-
-            for (int i = 0; i < _computers.Count; i++)
-            {
-                var pc = _computers[i];
-                table.Rows.Add(new object[] { pc.Name, pc.GetDeviceString() });
-            }
-
-            //show.Activate();
-            dbShow.Show();
-            dbShow.data = table;
-        }
-
-        private void SaveLogsButton_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
