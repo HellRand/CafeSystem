@@ -1,31 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CsvHelper.Configuration;
+﻿using CsvHelper.Configuration;
 
 namespace CafeSystem.Structure
 {
-    class User
+    internal class User
     {
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// ID пользователя
-        /// </summary>
-        public int UserId { get; set; }
-        
         public enum Permissions
         {
             Owner,
             Admin,
             User
         }
+
+        /// <summary>
+        ///     Имя пользователя
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     ID пользователя
+        /// </summary>
+        public int UserId { get; set; }
     }
 
-    sealed class UserMap : ClassMap<User>
+    internal sealed class UserMap : ClassMap<User>
     {
         public UserMap()
         {

@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CafeSystem.Structure;
-using CsvHelper;
 using CafeSystem.TelegramClient;
-using System.Runtime.InteropServices;
+using CsvHelper;
 using MetroFramework.Forms;
 
 namespace CafeSystem
 {
     public partial class MainForm : MetroForm
     {
-        static List<User> _users;
-        static List<Computer> _computers;
+        private static List<User> _users;
+        private static List<Computer> _computers;
 
         public MainForm()
         {
@@ -34,6 +29,7 @@ namespace CafeSystem
         private void MainForm_Load(object sender, EventArgs e)
         {
             #region Считывание объектов с CSV
+
             try
             {
                 using (var reader = new StreamReader("Computers.csv"))
@@ -44,7 +40,7 @@ namespace CafeSystem
                     var records = csv.GetRecords<Computer>().ToList();
 
                     //string test = "";
-                    foreach (Computer pc in records)
+                    foreach (var pc in records)
                     {
                         _computers.Add(pc);
                         LogBox.Log($"{pc.Name} => Подключен.", LogBox.LogType.Succes);
@@ -52,16 +48,20 @@ namespace CafeSystem
                     //MessageBox.Show(test);
                 }
             }
-            catch (Exception k) { MessageBox.Show($"Ошибка: {k.Message}"); }
-            
+            catch (Exception k)
+            {
+                MessageBox.Show($"Ошибка: {k.Message}");
+            }
+
             #endregion
 
             // Заносит пк в список объектов
             metroComboBox1.Items.AddRange(_computers.ToArray());
-            
+
             //.Text = $"Всего пк: {_computers.Count}.";
 
             #region Рандомные пк
+
             //for (int i = 0; i < 10; i++)
             //{
             //    Computer pc = new Computer();
@@ -74,22 +74,24 @@ namespace CafeSystem
             //    }
             //    _computers.Add(pc);
             //}
+
             #endregion
 
-            TelegramBot bot = new TelegramBot();
+            var bot = new TelegramBot();
             metroLabel1.Hide();
-
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             #region Сохранение списка ПК в CSV
+
             using (var writer = new StreamWriter("Computers.csv"))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csv.Context.RegisterClassMap<ComputerMap>();
                 csv.WriteRecords(_computers);
             }
+
             #endregion
         }
 
@@ -104,15 +106,16 @@ namespace CafeSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DatabaseShow dbShow = new DatabaseShow();
+            var dbShow = new DatabaseShow();
             dbShow.Text = "База данных подключенных компьютеров.";
-            DataTable table = new DataTable();
-            table.Columns.AddRange(new DataColumn[] { new DataColumn("Название ПК"), new DataColumn("Подключенные устройства") });
+            var table = new DataTable();
+            table.Columns.AddRange(new[]
+                {new DataColumn("Название ПК"), new DataColumn("Подключенные устройства")});
 
-            for (int i = 0; i < _computers.Count; i++)
+            for (var i = 0; i < _computers.Count; i++)
             {
                 var pc = _computers[i];
-                table.Rows.Add(new object[] { pc.Name, pc.GetDeviceString() });
+                table.Rows.Add(pc.Name, pc.GetDeviceString());
             }
 
             //show.Activate();
@@ -122,7 +125,6 @@ namespace CafeSystem
 
         private void SaveLogsButton_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

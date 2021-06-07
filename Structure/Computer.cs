@@ -1,30 +1,22 @@
-﻿using CsvHelper;
+﻿using System.Collections.Generic;
+using CsvHelper;
 using CsvHelper.Configuration;
-using CsvHelper.Configuration.Attributes;
 using CsvHelper.TypeConversion;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading;
 
 namespace CafeSystem.Structure
 {
-    class Computer
+    internal class Computer
     {
-        public string Name { get; set; }
-
-        public List<string> ConnectedDevices { get; set; }
-
         public Computer()
         {
             ConnectedDevices = new List<string>();
         }
 
-        #region 
+        public string Name { get; set; }
 
-        #endregion
+        public List<string> ConnectedDevices { get; set; }
+
         public override string ToString()
         {
             return Name;
@@ -32,16 +24,14 @@ namespace CafeSystem.Structure
 
         public string GetDeviceString()
         {
-            string res = "";
+            var res = "";
 
             if (ConnectedDevices.Count == 0) return "";
             if (ConnectedDevices.Count == 1) return $"[{ConnectedDevices[0]}]";
-            for (int i = 0; i < ConnectedDevices.Count; i++)
-            {
+            for (var i = 0; i < ConnectedDevices.Count; i++)
                 if (i == 0) res += $"[{ConnectedDevices[i]}|";
                 else if (i == ConnectedDevices.Count - 1) res += $"{ConnectedDevices[i]}]";
                 else res += $"{ConnectedDevices[i]}|";
-            }
 
             return res;
         }
@@ -50,6 +40,10 @@ namespace CafeSystem.Structure
         {
             return ConnectedDevices.Count == 0 ? Name : $"{Name}:\n{GetDeviceString()}";
         }
+
+        #region
+
+        #endregion
     }
 
     public class JsonConverter<T> : DefaultTypeConverter
@@ -65,7 +59,7 @@ namespace CafeSystem.Structure
         }
     }
 
-    sealed class ComputerMap : ClassMap<Computer>
+    internal sealed class ComputerMap : ClassMap<Computer>
     {
         public ComputerMap()
         {

@@ -6,26 +6,32 @@ namespace CafeSystem
 {
     public static class LogBox
     {
+        public enum LogType
+        {
+            Log,
+            Warning,
+            Error,
+            Succes
+        }
+
         public static RichTextBox RTB { get; set; }
 
         //public LogBox(RichTextBox textBox) => RTB = textBox;
 
         public static void Log(string message, LogType type = LogType.Log)
-        { 
-            RTB.BeginInvoke(new MethodInvoker(() => {
-                string currTime = DateTime.Now.ToString("dd/MM HH:mm:ss");
+        {
+            RTB.BeginInvoke(new MethodInvoker(() =>
+            {
+                var currTime = DateTime.Now.ToString("dd/MM HH:mm:ss");
 
                 RTB.SelectionStart = RTB.TextLength;
                 RTB.SelectionLength = message.Length;
-                Color currColor = RTB.ForeColor;
+                var currColor = RTB.ForeColor;
 
                 switch (type)
                 {
                     case LogType.Log:
-                        RTB.BeginInvoke(new Action(() =>
-                        {
-                            RTB.AppendText($"[{currTime}] {message}\n");
-                        }));
+                        RTB.BeginInvoke(new Action(() => { RTB.AppendText($"[{currTime}] {message}\n"); }));
                         break;
 
                     case LogType.Warning:
@@ -54,20 +60,8 @@ namespace CafeSystem
                             RTB.SelectionColor = currColor;
                         }));
                         break;
-
-                    default:
-                        break;
                 }
             }));
-            
-        }
-
-        public enum LogType
-        {
-            Log,
-            Warning,
-            Error,
-            Succes
         }
     }
 }
