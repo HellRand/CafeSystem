@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using CsvHelper.Configuration;
 
 namespace CafeSystem.Structure
 {
@@ -22,6 +23,14 @@ namespace CafeSystem.Structure
             Admin,
             User
         }
+    }
 
+    sealed class UserMap : ClassMap<User>
+    {
+        public UserMap()
+        {
+            Map(m => m.UserId).Name("id");
+            Map(m => m.Name).Name("username");
+        }
     }
 }
