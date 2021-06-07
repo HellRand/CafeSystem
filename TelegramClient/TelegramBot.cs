@@ -22,8 +22,14 @@ namespace CafeSystem.TelegramClient
             client.OnMessage += Client_OnMessage;
             client.StartReceiving();
 
-            if (client.IsReceiving) LogBox.Log("Telegram клиент подключен успешно!", LogBox.LogType.Succes);
-            else Reconnect();
+            if (client.IsReceiving) LogBox.Log("Telegram клиент подключен.", LogBox.LogType.Warning);
+            else
+            {
+                LogBox.Log("Проверьте подключение к интернету!" +
+                    "\nСистема подключится к Telegram клиенту автоматически, " +
+                    "как только появится интернет соединение.", LogBox.LogType.Error);
+                Reconnect();
+            }
         }
 
         private void Client_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
