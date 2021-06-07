@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -22,18 +20,8 @@ namespace CafeSystem.TelegramClient
         {
             client.OnMessage += Client_OnMessage;
             client.StartReceiving();
-
-            if (client.IsReceiving)
-            {
-                LogBox.Log("Telegram клиент подключен.", LogBox.LogType.Warning);
-            }
-            else
-            {
-                LogBox.Log("Проверьте подключение к интернету!" +
-                           "\nСистема подключится к Telegram клиенту автоматически, " +
-                           "как только появится интернет соединение.", LogBox.LogType.Error);
-                Reconnect();
-            }
+            LogBox.Log("Telegram клиент запущен!\n" +
+                       "(при отсутствии интернет соединения tg клиент будет в режиме ожидания)");
         }
 
         private void Client_OnMessage(object sender, MessageEventArgs e)
@@ -52,22 +40,6 @@ namespace CafeSystem.TelegramClient
                         new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData($"{e.Message}", "pepega")));
                     break;
             }
-        }
-
-        private async void Reconnect()
-        {
-            await Task.Run(() =>
-            {
-                var i = 0;
-                while (!client.IsReceiving)
-                {
-                    if (++i % 5 == 0) LogBox.Log($"Попытка переподключения Telegram клиента... ({i})");
-                    client.StartReceiving();
-                    Thread.Sleep(5000);
-                }
-
-                LogBox.Log("Telegram клиент подключен успешно!", LogBox.LogType.Succes);
-            });
         }
     }
 }
