@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace CafeSystem.Structure
 {
-    internal class Computer
+    public class Computer
     {
         public Computer()
         {
