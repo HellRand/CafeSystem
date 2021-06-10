@@ -2,7 +2,7 @@
 
 namespace CafeSystem.Structure
 {
-    internal class User
+    public class User
     {
         public enum Permissions
         {

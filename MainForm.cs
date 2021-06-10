@@ -4,6 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using CafeSystem.Structure;
 using CafeSystem.TelegramClient;
@@ -23,8 +24,9 @@ namespace CafeSystem
             _users = new List<User>();
             _computers = new List<Computer>();
             LogBox.RTB = richTextBox1;
-        }
 
+            
+        }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -43,7 +45,7 @@ namespace CafeSystem
                     foreach (var pc in records)
                     {
                         _computers.Add(pc);
-                        LogBox.Log($"{pc.Name} => Подключен.", LogBox.LogType.Succes);
+                        LogBox.Log($"{pc.Name} => Подключен.");
                     }
                     //MessageBox.Show(test);
                 }
@@ -79,6 +81,8 @@ namespace CafeSystem
 
             var bot = new TelegramBot();
             metroLabel1.Hide();
+
+            
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -104,7 +108,7 @@ namespace CafeSystem
             metroLabel1.Text = selectedPc.GetDeviceString();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void ShowComputersDatabase_Click(object sender, EventArgs e)
         {
             var dbShow = new DatabaseShow();
             dbShow.Text = "База данных подключенных компьютеров.";
@@ -125,6 +129,23 @@ namespace CafeSystem
 
         private void SaveLogsButton_Click(object sender, EventArgs e)
         {
+            string text = richTextBox1.Text;
+            if (text == String.Empty)
+            {
+                MessageBox.Show("Журнал пустой, нечего сохранять!");
+                return;
+            }
+
+            Task.Run(() =>
+            {
+                File.WriteAllText($"Лог_{DateTime.Now.ToFileTime()}.txt", text);
+
+                LogBox.RTB.BeginInvoke(new MethodInvoker(() => { LogBox.RTB.Text = String.Empty; }));
+
+                LogBox.Log("Лог файл сохранён успешно!", LogBox.LogType.Succes);
+                MessageBox.Show("Лог файл сохранён успешно!");
+            });
         }
+
     }
 }

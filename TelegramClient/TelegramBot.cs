@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System;
+using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -19,9 +20,23 @@ namespace CafeSystem.TelegramClient
         public TelegramBot()
         {
             client.OnMessage += Client_OnMessage;
+            client.OnCallbackQuery += Client_OnCallbackQuery;
             client.StartReceiving();
             LogBox.Log("Telegram клиент запущен!\n" +
-                       "(при отсутствии интернет соединения tg клиент будет в режиме ожидания)");
+                       "(при отсутствии интернет соединения telegram клиент будет в режиме ожидания)");
+        }
+
+        private void Client_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        {
+            
+
+            switch (e.CallbackQuery.Data)
+            {
+                default:
+                    client.SendTextMessageAsync(e.CallbackQuery.From.Id, "???");
+                    client.DeleteMessageAsync(e.CallbackQuery.From.Id, e.CallbackQuery.Message.MessageId);
+                    break;
+            }
         }
 
         private void Client_OnMessage(object sender, MessageEventArgs e)

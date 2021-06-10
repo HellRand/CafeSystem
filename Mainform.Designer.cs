@@ -38,10 +38,10 @@ namespace CafeSystem
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.SaveLogsButton = new MetroFramework.Controls.MetroButton();
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.button1 = new MetroFramework.Controls.MetroButton();
-            this.SaveLogsButton = new MetroFramework.Controls.MetroButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -114,6 +114,7 @@ namespace CafeSystem
             this.richTextBox1.Font = new System.Drawing.Font("Century Gothic", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.richTextBox1.Location = new System.Drawing.Point(3, 3);
             this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
             this.richTextBox1.Size = new System.Drawing.Size(746, 361);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
@@ -130,6 +131,17 @@ namespace CafeSystem
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Настройки";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // SaveLogsButton
+            // 
+            this.SaveLogsButton.Location = new System.Drawing.Point(511, 52);
+            this.SaveLogsButton.Name = "SaveLogsButton";
+            this.SaveLogsButton.Size = new System.Drawing.Size(238, 43);
+            this.SaveLogsButton.TabIndex = 4;
+            this.SaveLogsButton.Text = "Сохранить логи";
+            this.SaveLogsButton.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.SaveLogsButton.UseSelectable = true;
+            this.SaveLogsButton.Click += new System.EventHandler(this.SaveLogsButton_Click);
             // 
             // metroLabel2
             // 
@@ -162,18 +174,7 @@ namespace CafeSystem
             this.button1.Text = "Компьютеры";
             this.button1.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.button1.UseSelectable = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // SaveLogsButton
-            // 
-            this.SaveLogsButton.Location = new System.Drawing.Point(511, 52);
-            this.SaveLogsButton.Name = "SaveLogsButton";
-            this.SaveLogsButton.Size = new System.Drawing.Size(238, 43);
-            this.SaveLogsButton.TabIndex = 4;
-            this.SaveLogsButton.Text = "Сохранить логи";
-            this.SaveLogsButton.Theme = MetroFramework.MetroThemeStyle.Dark;
-            this.SaveLogsButton.UseSelectable = true;
-            this.SaveLogsButton.Click += new System.EventHandler(this.SaveLogsButton_Click);
+            this.button1.Click += new System.EventHandler(this.ShowComputersDatabase_Click);
             // 
             // MainForm
             // 

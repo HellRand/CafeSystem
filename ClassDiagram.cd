@@ -34,7 +34,7 @@
   <Class Name="CafeSystem.MainForm">
     <Position X="0.75" Y="1" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AACQAACAACAAQAAAAACIEIACAAAYAIAAAECQAAABBgA=</HashCode>
+      <HashCode>AACAAAAAACAAQAAAAACIAAACAAAYAAAAAACQAAABBAA=</HashCode>
       <FileName>MainForm.cs</FileName>
     </TypeIdentifier>
   </Class>

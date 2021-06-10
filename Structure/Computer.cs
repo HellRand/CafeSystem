@@ -8,20 +8,51 @@ namespace CafeSystem.Structure
 {
     public class Computer
     {
+        /// <summary>
+        /// ПК забронирован?
+        /// </summary>
+        internal bool Reserved;
+
+        /// <summary>
+        /// Данные о брони пк.
+        /// </summary>
+        internal Reservation Reservation;
+
+        /// <summary>
+        /// Текущий пользователь пк
+        /// </summary>
+        internal User User;
+
+        /// <summary>
+        /// Цена за час бронирования пк
+        /// </summary>
+        internal double PricePerHour = 0;
+
         public Computer()
         {
             ConnectedDevices = new List<string>();
         }
 
+        /// <summary>
+        /// Имя ПК
+        /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Подключенные устройства к этому пк
+        /// </summary>
         public List<string> ConnectedDevices { get; set; }
 
+        #region Работа со строками/строковыми форматами
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Вывод всех подключенных устройств к ПК
+        /// </summary>
+        /// <returns>список подключенных устройств</returns>
         public string GetDeviceString()
         {
             var res = "";
@@ -41,7 +72,7 @@ namespace CafeSystem.Structure
             return ConnectedDevices.Count == 0 ? Name : $"{Name}:\n{GetDeviceString()}";
         }
 
-        #region
+        
 
         #endregion
     }
