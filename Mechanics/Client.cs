@@ -21,17 +21,28 @@ namespace CafeSystem.Mechanics
             Users = usrs;
         }
 
-        public void ReserveComputer(Computer pc, Reservation res)
+        public bool ReserveComputer(Computer pc, Reservation res)
         {
-            if (pc == null || res == null) throw new System.Exception("В конструкторе пустой объект!");
+            if (pc == null || res == null) throw new System.Exception("Выберите пк и время резервации!");
             
             if (pc.Reserved)
             {
                 On_Message(pc, "Этот компьютер занят!");
-                return;
+                return false;
             }
 
-           
+            pc.Reservation = res;
+            pc.Reserved = true;
+
+            On_Message(pc, $"Компьютер \"{pc.Name}\" забронирован успешно!");
+            return true;
         }
+
+        internal User GetUserById(int id)
+        {
+            return Users.Find(m => m.UserId == id);
+        }
+
+        
     }
 }
