@@ -49,15 +49,21 @@ namespace CafeSystem.Structure
         {
             await Task.Run(() =>
             {
+                
                 //Status = Status.Waiting;
                 while (StartTime > DateTime.Now) Thread.Sleep(1000);
 
                 On_ReservationStarted?.Invoke(this, ReservedPC);
+                LogBox.Log($"Компьютер \"{ReservedPC}\" забронирован пользователем \"{ReservedPC.User}\". Детали бронирования: {this}");
 
                 //Status = Status.Active;
                 while (DateTime.Now < EndTime) Thread.Sleep(1000);
+                ReservedPC.User.VisitedTime += (DateTime.Now - StartTime).TotalSeconds;
+                ReservedPC.Reserved = false;
+                
 
                 On_ReservationEnded?.Invoke(this, ReservedPC);
+                ReservedPC.User = null;
             });
         }
 

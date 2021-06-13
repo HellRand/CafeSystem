@@ -31,8 +31,11 @@ namespace CafeSystem
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.metroRadioButton2 = new MetroFramework.Controls.MetroRadioButton();
+            this.metroRadioButton1 = new MetroFramework.Controls.MetroRadioButton();
             this.metroLabel1 = new MetroFramework.Controls.MetroLabel();
             this.metroComboBox1 = new MetroFramework.Controls.MetroComboBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -42,8 +45,6 @@ namespace CafeSystem
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.button1 = new MetroFramework.Controls.MetroButton();
-            this.metroRadioButton1 = new MetroFramework.Controls.MetroRadioButton();
-            this.metroRadioButton2 = new MetroFramework.Controls.MetroRadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -56,12 +57,13 @@ namespace CafeSystem
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Location = new System.Drawing.Point(20, 30);
+            this.tabControl1.Location = new System.Drawing.Point(20, 60);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(760, 400);
+            this.tabControl1.Size = new System.Drawing.Size(760, 370);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
@@ -72,17 +74,47 @@ namespace CafeSystem
             this.tabPage1.Location = new System.Drawing.Point(4, 29);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(752, 367);
+            this.tabPage1.Size = new System.Drawing.Size(752, 337);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Главная";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // metroRadioButton2
+            // 
+            this.metroRadioButton2.AutoSize = true;
+            this.metroRadioButton2.FontSize = MetroFramework.MetroCheckBoxSize.Medium;
+            this.metroRadioButton2.Location = new System.Drawing.Point(18, 34);
+            this.metroRadioButton2.Name = "metroRadioButton2";
+            this.metroRadioButton2.Size = new System.Drawing.Size(113, 19);
+            this.metroRadioButton2.TabIndex = 3;
+            this.metroRadioButton2.Text = "Пользователи";
+            this.metroRadioButton2.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroRadioButton2.UseSelectable = true;
+            this.metroRadioButton2.CheckedChanged += new System.EventHandler(this.metroRadioButton2_CheckedChanged);
+            // 
+            // metroRadioButton1
+            // 
+            this.metroRadioButton1.AutoSize = true;
+            this.metroRadioButton1.Checked = true;
+            this.metroRadioButton1.FontSize = MetroFramework.MetroCheckBoxSize.Medium;
+            this.metroRadioButton1.Location = new System.Drawing.Point(18, 13);
+            this.metroRadioButton1.Name = "metroRadioButton1";
+            this.metroRadioButton1.Size = new System.Drawing.Size(210, 19);
+            this.metroRadioButton1.TabIndex = 2;
+            this.metroRadioButton1.TabStop = true;
+            this.metroRadioButton1.Text = "Подключенные компьютеры";
+            this.metroRadioButton1.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.metroRadioButton1.UseSelectable = true;
+            this.metroRadioButton1.CheckedChanged += new System.EventHandler(this.metroRadioButton1_CheckedChanged);
+            // 
             // metroLabel1
             // 
             this.metroLabel1.AutoSize = true;
-            this.metroLabel1.Location = new System.Drawing.Point(3, 194);
+            this.metroLabel1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.metroLabel1.FontWeight = MetroFramework.MetroLabelWeight.Regular;
+            this.metroLabel1.Location = new System.Drawing.Point(18, 103);
             this.metroLabel1.Name = "metroLabel1";
-            this.metroLabel1.Size = new System.Drawing.Size(147, 19);
+            this.metroLabel1.Size = new System.Drawing.Size(153, 19);
             this.metroLabel1.TabIndex = 1;
             this.metroLabel1.Text = "Статус выбранного ПК";
             // 
@@ -92,7 +124,7 @@ namespace CafeSystem
             | System.Windows.Forms.AnchorStyles.Right)));
             this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.ItemHeight = 23;
-            this.metroComboBox1.Location = new System.Drawing.Point(3, 162);
+            this.metroComboBox1.Location = new System.Drawing.Point(3, 71);
             this.metroComboBox1.Name = "metroComboBox1";
             this.metroComboBox1.Size = new System.Drawing.Size(746, 29);
             this.metroComboBox1.TabIndex = 0;
@@ -105,7 +137,7 @@ namespace CafeSystem
             this.tabPage2.Location = new System.Drawing.Point(4, 29);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(752, 367);
+            this.tabPage2.Size = new System.Drawing.Size(752, 337);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Лог";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -119,7 +151,7 @@ namespace CafeSystem
             this.richTextBox1.Location = new System.Drawing.Point(3, 3);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(746, 361);
+            this.richTextBox1.Size = new System.Drawing.Size(746, 331);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -131,7 +163,7 @@ namespace CafeSystem
             this.tabPage3.Controls.Add(this.button1);
             this.tabPage3.Location = new System.Drawing.Point(4, 29);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(752, 367);
+            this.tabPage3.Size = new System.Drawing.Size(752, 337);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Настройки";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -168,6 +200,7 @@ namespace CafeSystem
             this.button2.Text = "Пользователи";
             this.button2.Theme = MetroFramework.MetroThemeStyle.Dark;
             this.button2.UseSelectable = true;
+            this.button2.Click += new System.EventHandler(this.ShowUsersDatabase_Click);
             // 
             // button1
             // 
@@ -180,44 +213,25 @@ namespace CafeSystem
             this.button1.UseSelectable = true;
             this.button1.Click += new System.EventHandler(this.ShowComputersDatabase_Click);
             // 
-            // metroRadioButton1
-            // 
-            this.metroRadioButton1.AutoSize = true;
-            this.metroRadioButton1.Location = new System.Drawing.Point(18, 29);
-            this.metroRadioButton1.Name = "metroRadioButton1";
-            this.metroRadioButton1.Size = new System.Drawing.Size(127, 15);
-            this.metroRadioButton1.TabIndex = 2;
-            this.metroRadioButton1.Text = "metroRadioButton1";
-            this.metroRadioButton1.UseSelectable = true;
-            // 
-            // metroRadioButton2
-            // 
-            this.metroRadioButton2.AutoSize = true;
-            this.metroRadioButton2.Location = new System.Drawing.Point(18, 51);
-            this.metroRadioButton2.Name = "metroRadioButton2";
-            this.metroRadioButton2.Size = new System.Drawing.Size(127, 15);
-            this.metroRadioButton2.TabIndex = 3;
-            this.metroRadioButton2.Text = "metroRadioButton2";
-            this.metroRadioButton2.UseSelectable = true;
-            // 
             // MainForm
             // 
+            this.ApplyImageInvert = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
+            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.BackImage = global::CafeSystem.Properties.Resources._229659_200;
+            this.BackImagePadding = new System.Windows.Forms.Padding(20, 10, 10, 10);
+            this.BackMaxSize = 50;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.tabControl1);
-            this.DisplayHeader = false;
             this.Font = new System.Drawing.Font("Century Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.MinimumSize = new System.Drawing.Size(600, 400);
             this.Name = "MainForm";
-            this.Padding = new System.Windows.Forms.Padding(20, 30, 20, 20);
-            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.None;
-            this.Text = "Кек";
-            this.Theme = MetroFramework.MetroThemeStyle.Dark;
+            this.ShadowType = MetroFramework.Forms.MetroFormShadowType.DropShadow;
+            this.Theme = MetroFramework.MetroThemeStyle.Default;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tabControl1.ResumeLayout(false);

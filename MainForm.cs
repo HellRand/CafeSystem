@@ -32,7 +32,7 @@ namespace CafeSystem
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            #region Считывание объектов с CSV
+            #region Считывание списка компьютеров с CSV
 
             try
             {
@@ -59,6 +59,31 @@ namespace CafeSystem
 
             #endregion
 
+            #region Считывание списка пользователей с CSV
+
+            try
+            {
+                using (var reader = new StreamReader("Users.csv"))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<UserMap>();
+
+                    var records = csv.GetRecords<User>().ToList();
+
+                    foreach (var user in records)
+                    {
+                        _users.Add(user);
+                    }
+                    LogBox.Log($"Найдено пользователей в базе данных: {_users.Count}.");
+                }
+            }
+            catch (Exception k)
+            {
+                MessageBox.Show($"Ошибка: {k.Message}");
+            }
+
+            #endregion
+            
             // Заносит пк в список объектов
             metroComboBox1.Items.AddRange(_computers.ToArray());
 
@@ -87,13 +112,19 @@ namespace CafeSystem
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            #region Сохранение списка ПК в CSV
+            #region Сохранение списка ПК и Пользователей в CSV
 
             using (var writer = new StreamWriter("Computers.csv"))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csv.Context.RegisterClassMap<ComputerMap>();
                 csv.WriteRecords(_computers);
+            }
+            using (var writer = new StreamWriter("Users.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<UserMap>();
+                csv.WriteRecords(_users);
             }
 
             #endregion
@@ -104,8 +135,20 @@ namespace CafeSystem
             if (metroComboBox1.SelectedItem == null) return;
             metroLabel1.Show();
 
-            var selectedPc = metroComboBox1.SelectedItem as Computer;
-            metroLabel1.Text = selectedPc.GetDeviceString();
+            if (metroRadioButton1.Checked)
+            {
+                var selectedPc = metroComboBox1.SelectedItem as Computer;
+                string reserved = selectedPc.Reserved ? "Используется" : "Свободен"; // Статус пк
+                string reservation = selectedPc.Reserved ? $"({selectedPc.Reservation})" : ""; // Данные брони
+
+                metroLabel1.Text = $"Имя компьютера: {selectedPc}.\nЦена: {selectedPc.PricePerHour} руб./ч.\n" +
+                                   $"Статус: {reserved}.\n{reservation}";
+            } else if (metroRadioButton2.Checked)
+            {
+                var user = metroComboBox1.SelectedItem as User;
+                metroLabel1.Text = $"{user.PermToStr()}\nИмя: {user.Name}\nИдентификатор: {user.UserId}\n" +
+                   $"Время общего бронирования: {Math.Round(user.VisitedTime / 60, 1)}мин.";
+            }
         }
 
         private void ShowComputersDatabase_Click(object sender, EventArgs e)
@@ -116,12 +159,12 @@ namespace CafeSystem
             };
             var table = new DataTable();
 
-            table.Columns.AddRange(new[] {new DataColumn("Название ПК"), new DataColumn("Подключенные устройства")});
+            table.Columns.AddRange(new[] {new DataColumn("Название ПК"),new DataColumn("Цена (руб./ч.)"), new DataColumn("Подключенные устройства")});
 
             for (var i = 0; i < _computers.Count; i++)
             {
                 var pc = _computers[i];
-                table.Rows.Add(pc.Name, pc.GetDeviceString());
+                table.Rows.Add(pc.Name, pc.PricePerHour, pc.GetDeviceString());
             }
 
             //show.Activate();
@@ -129,6 +172,28 @@ namespace CafeSystem
             dbShow.data = table;
         }
 
+        private void ShowUsersDatabase_Click(object sender, EventArgs e)
+        {
+            var dbShow = new DatabaseShow
+            {
+                Text = "База данных зарегестрированных пользователей."
+            };
+            var table = new DataTable();
+
+            table.Columns.AddRange(new[] { new DataColumn("Идентификатор пользователя"), new DataColumn("Имя пользователя"), new DataColumn("Общее время брони"), new DataColumn("Доступ") });
+
+            for (var i = 0; i < _users.Count; i++)
+            {
+                var user = _users[i];
+                table.Rows.Add(user.UserId, user.Name, $"{Math.Round(user.VisitedTime/60, 1)} мин.", user.Perms);
+            }
+
+            //show.Activate();
+            dbShow.Show();
+            dbShow.data = table;
+        }
+
+        //Кнопка сохранения логов
         private void SaveLogsButton_Click(object sender, EventArgs e)
         {
             var text = richTextBox1.Text;
@@ -140,13 +205,44 @@ namespace CafeSystem
 
             Task.Run(() =>
             {
-                File.WriteAllText($"Лог_{DateTime.Now.ToFileTime()}.txt", text);
+                var fileTime = DateTime.Now.ToFileTime();
+                File.WriteAllText($"Лог_{fileTime}.txt", text);
 
                 LogBox.Rtb.BeginInvoke(new MethodInvoker(() => { LogBox.Rtb.Text = string.Empty; }));
 
                 LogBox.Log("Лог файл сохранён успешно!", LogBox.LogType.Success);
-                MessageBox.Show("Лог файл сохранён успешно!");
+                var res = MessageBox.Show("Лог файл сохранён успешно! Открыть?", "Открыть сохранённый лог файл?", MessageBoxButtons.YesNo);
+                if (res == DialogResult.Yes)
+                {
+                    System.Diagnostics.Process.Start("notepad.exe", Directory.GetCurrentDirectory()+ $"\\Лог_{fileTime}.txt");
+                }
             });
         }
+
+        //Кнопка "показ компов"
+        private void metroRadioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!metroRadioButton1.Checked) return;
+            metroLabel1.Text = "";
+
+            metroComboBox1.Items.Clear();
+            metroComboBox1.Items.AddRange(_computers.ToArray());
+        }
+
+        private void metroRadioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!metroRadioButton2.Checked) return;
+            metroLabel1.Text = "";
+
+            metroComboBox1.Items.Clear();
+            metroComboBox1.Items.AddRange(_users.ToArray());
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }

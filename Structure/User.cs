@@ -1,4 +1,5 @@
 ﻿using CsvHelper.Configuration;
+using System;
 
 namespace CafeSystem.Structure
 {
@@ -27,16 +28,30 @@ namespace CafeSystem.Structure
         /// <summary>
         ///     Сумма времени бронирования.
         /// </summary>
-        public double VisitedTime { get; set; }
+        public double VisitedTime { get; set; } = 0;
 
         /// <summary>
         ///     Уровень доступа пользователя
         /// </summary>
-        public Permissions Perms { get; set; }
+        public Permissions Perms { get; set; } = Permissions.User;
 
         public override string ToString()
         {
-            return $"Name: {Name}, UserId: {UserId}, VisitedTime: {VisitedTime}, Perms: {Perms}";
+            return $"{Name} -> {Perms}";
+        }
+
+        public string PermToStr()
+        {
+            switch (Perms)
+            {
+                case Permissions.Owner:
+                    return "Владелец";
+                case Permissions.Admin:
+                    return "Администратор";
+                case Permissions.User:
+                    return "Пользователь";
+            }
+            return "Не указано";
         }
     }
 

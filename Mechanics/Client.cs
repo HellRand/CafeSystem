@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using CafeSystem.Structure;
 using CsvHelper;
 
@@ -19,8 +20,22 @@ namespace CafeSystem.Mechanics
         public List<User> Users { get; set; }
 
         public List<Reservation> Reservations { get; set; }
-        public abstract List<Computer> GetFreePCs();
 
+        /// <summary>
+        /// Все незарезервированные на текущий момент ПК. 
+        /// </summary>
+        /// <returns>Список свободных ПК</returns>
+        public List<Computer> GetFreePCs()
+        {
+            return Computers.Where(m => m.Reserved == false).ToList();
+        }
+        
+        /// <summary>
+        /// Метод резервирования ПК
+        /// </summary>
+        /// <param name="pc">Объект заказываемого пк</param>
+        /// <param name="res">Объект юзера, который его заказал</param>
+        /// <returns>Успешно/Неудачно</returns>
         public bool ReserveComputer(Computer pc, Reservation res)
         {
             if (pc == null || res == null)
@@ -38,7 +53,7 @@ namespace CafeSystem.Mechanics
             pc.Reservation = res; //Объявляем бронирование
             pc.Reserved = true; //отмечаем ПК как забронированый
 
-            res.On_ReservationEnded += PC_On_ReservationEnd; //Подписываемся на событие, когда резервация закончится
+            //res.On_ReservationEnded += PC_On_ReservationEnd; //Подписываемся на событие, когда резервация закончится
 
             OnMessage?.Invoke(pc, $"Компьютер \"{pc.Name}\" забронирован успешно!");
             return true;
@@ -49,16 +64,27 @@ namespace CafeSystem.Mechanics
             pc.Reservation = null;
             pc.Reserved = false;
             pc.User.VisitedTime += reservation.Duration.TotalSeconds;
+            LogBox.Log($"\"{pc}\" -> время бронирования закончилось. Компьютер более не занят.");
         }
 
         /// <summary>
-        ///     Выполняет поиск пользователя по его Id =>
+        /// Выполняет поиск пользователя по его Id
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">идентификатор пользователя (чат id в телеграмм)</param>
+        /// <returns>Пользователь</returns>
         internal User GetUserById(long id)
         {
             return Users.Find(m => m.UserId == id);
+        }
+        
+        /// <summary>
+        /// Выполняет поиск пк по его наименованию
+        /// </summary>
+        /// <param name="name">Наименование пк, которое ищем</param>
+        /// <returns>Компьютер</returns>
+        internal Computer GetComputerByName(string name)
+        {
+            return Computers.Find(m => m.Name.ToLower() == name.ToLower());
         }
 
         /// <summary>

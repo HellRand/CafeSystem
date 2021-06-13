@@ -95,6 +95,7 @@ namespace CafeSystem.Structure
         public ComputerMap()
         {
             Map(m => m.Name);
+            Map(m => m.PricePerHour).Name("price");
             Map(m => m.ConnectedDevices).Name("Devices").TypeConverter<JsonConverter<List<string>>>();
         }
     }
