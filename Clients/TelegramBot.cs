@@ -38,13 +38,12 @@ namespace CafeSystem.Clients
             {
                 case "PCS":
                     var freePCs = GetFreePCs();
-                    var buttons = new InlineKeyboardButton[freePCs.Count];
-                    for (var i = 0; i < buttons.Length; i++)
-                        buttons[i] = InlineKeyboardButton.WithCallbackData(freePCs[i].Name);
+                    var buttons = new List<ReplyKeyboardMarkup>();
+
 
                     TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой ПК:",
                         ParseMode.Default, false, false, 0,
-                        new InlineKeyboardMarkup(buttons));
+                        (IReplyMarkup)buttons);
                     break;
                 default:
                     TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "???");
