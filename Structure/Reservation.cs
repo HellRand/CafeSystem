@@ -6,7 +6,14 @@ namespace CafeSystem.Structure
 {
     public class Reservation
     {
-        public delegate void ReservationHandler(Reservation reservation);
+        /// <summary>
+        /// Частота обновления
+        /// </summary>
+        public int Frequency { get; set; } = 1000; // = Каждую секунду будет обновлятся главный поток.
+
+        public delegate void ReservationHandler(Reservation reservation, Computer pc);
+        internal Computer ReservedPC;
+        internal User User;
 
         public Reservation(TimeSpan duration)
         {
@@ -42,15 +49,15 @@ namespace CafeSystem.Structure
         {
             await Task.Run(() =>
             {
-                Status = Status.Waiting;
+                //Status = Status.Waiting;
                 while (StartTime > DateTime.Now) Thread.Sleep(1000);
 
-                On_ReservationStarted?.Invoke(this);
+                On_ReservationStarted?.Invoke(this, ReservedPC);
 
-                Status = Status.Active;
+                //Status = Status.Active;
                 while (DateTime.Now < EndTime) Thread.Sleep(1000);
 
-                On_ReservationEnded?.Invoke(this);
+                On_ReservationEnded?.Invoke(this, ReservedPC);
             });
         }
 
@@ -81,23 +88,13 @@ namespace CafeSystem.Structure
         /// </summary>
         public TimeSpan Remaining { get; set; }
 
-        /// <summary>
-        /// Текущий статус брони
-        /// </summary>
-        public Status Status { get; private set; }
 
         #endregion
 
         public override string ToString()
         {
             return $"Время бронирования: [{StartTime.ToString("HH:mm:ss")} - {EndTime.ToString("HH:mm:ss")}]\n" +
-                   $"Длительность брони: {Duration.ToString()}";
+                   $"Длительность брони: {Duration}";
         }
-    }
-
-    public enum Status
-    {
-        Waiting,
-        Active
     }
 }

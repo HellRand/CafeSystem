@@ -24,7 +24,7 @@ namespace CafeSystem.Structure
         /// <summary>
         /// Сумма времени бронирования.
         /// </summary>
-        public int VisitedHours { get; set; }
+        public double VisitedHours { get; set; }
 
         /// <summary>
         /// Уровень доступа пользователя

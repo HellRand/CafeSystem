@@ -79,7 +79,7 @@ namespace CafeSystem
 
             #endregion
 
-            var bot = new TelegramBot();
+            //var bot = new TelegramBot();
             metroLabel1.Hide();
 
             
@@ -110,11 +110,13 @@ namespace CafeSystem
 
         private void ShowComputersDatabase_Click(object sender, EventArgs e)
         {
-            var dbShow = new DatabaseShow();
-            dbShow.Text = "База данных подключенных компьютеров.";
+            var dbShow = new DatabaseShow
+            {
+                Text = "База данных подключенных компьютеров."
+            };
             var table = new DataTable();
-            table.Columns.AddRange(new[]
-                {new DataColumn("Название ПК"), new DataColumn("Подключенные устройства")});
+
+            table.Columns.AddRange(new[] {new DataColumn("Название ПК"), new DataColumn("Подключенные устройства")});
 
             for (var i = 0; i < _computers.Count; i++)
             {

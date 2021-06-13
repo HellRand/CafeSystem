@@ -42,6 +42,8 @@ namespace CafeSystem
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.button1 = new MetroFramework.Controls.MetroButton();
+            this.metroRadioButton1 = new MetroFramework.Controls.MetroRadioButton();
+            this.metroRadioButton2 = new MetroFramework.Controls.MetroRadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -63,6 +65,8 @@ namespace CafeSystem
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.metroRadioButton2);
+            this.tabPage1.Controls.Add(this.metroRadioButton1);
             this.tabPage1.Controls.Add(this.metroLabel1);
             this.tabPage1.Controls.Add(this.metroComboBox1);
             this.tabPage1.Location = new System.Drawing.Point(4, 29);
@@ -76,7 +80,7 @@ namespace CafeSystem
             // metroLabel1
             // 
             this.metroLabel1.AutoSize = true;
-            this.metroLabel1.Location = new System.Drawing.Point(3, 35);
+            this.metroLabel1.Location = new System.Drawing.Point(3, 194);
             this.metroLabel1.Name = "metroLabel1";
             this.metroLabel1.Size = new System.Drawing.Size(147, 19);
             this.metroLabel1.TabIndex = 1;
@@ -88,7 +92,7 @@ namespace CafeSystem
             | System.Windows.Forms.AnchorStyles.Right)));
             this.metroComboBox1.FormattingEnabled = true;
             this.metroComboBox1.ItemHeight = 23;
-            this.metroComboBox1.Location = new System.Drawing.Point(3, 3);
+            this.metroComboBox1.Location = new System.Drawing.Point(3, 162);
             this.metroComboBox1.Name = "metroComboBox1";
             this.metroComboBox1.Size = new System.Drawing.Size(746, 29);
             this.metroComboBox1.TabIndex = 0;
@@ -176,6 +180,26 @@ namespace CafeSystem
             this.button1.UseSelectable = true;
             this.button1.Click += new System.EventHandler(this.ShowComputersDatabase_Click);
             // 
+            // metroRadioButton1
+            // 
+            this.metroRadioButton1.AutoSize = true;
+            this.metroRadioButton1.Location = new System.Drawing.Point(18, 29);
+            this.metroRadioButton1.Name = "metroRadioButton1";
+            this.metroRadioButton1.Size = new System.Drawing.Size(127, 15);
+            this.metroRadioButton1.TabIndex = 2;
+            this.metroRadioButton1.Text = "metroRadioButton1";
+            this.metroRadioButton1.UseSelectable = true;
+            // 
+            // metroRadioButton2
+            // 
+            this.metroRadioButton2.AutoSize = true;
+            this.metroRadioButton2.Location = new System.Drawing.Point(18, 51);
+            this.metroRadioButton2.Name = "metroRadioButton2";
+            this.metroRadioButton2.Size = new System.Drawing.Size(127, 15);
+            this.metroRadioButton2.TabIndex = 3;
+            this.metroRadioButton2.Text = "metroRadioButton2";
+            this.metroRadioButton2.UseSelectable = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -219,6 +243,8 @@ namespace CafeSystem
         private MetroFramework.Controls.MetroButton button1;
         private MetroFramework.Controls.MetroLabel metroLabel2;
         private MetroFramework.Controls.MetroButton SaveLogsButton;
+        private MetroFramework.Controls.MetroRadioButton metroRadioButton2;
+        private MetroFramework.Controls.MetroRadioButton metroRadioButton1;
     }
 }
 
