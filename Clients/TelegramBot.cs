@@ -1,22 +1,23 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
+using CafeSystem.Mechanics;
+using CafeSystem.Structure;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using CafeSystem.Mechanics;
-using System.Collections.Generic;
-using CafeSystem.Structure;
 
-namespace CafeSystem.TelegramClient
+namespace CafeSystem.Clients
 {
-    internal class TelegramBot : Client
+    internal sealed class TelegramBot : Client
     {
         #region SecretKey
 
         /// <summary>
         ///     Токен
         /// </summary>
-        public TelegramBotClient client = new TelegramBotClient("1800173075:AAFy3ZjXgfPpTCbfJzhLJo10M7za2zANxAc");
+        private readonly TelegramBotClient TgClient =
+            new TelegramBotClient("1800173075:AAFy3ZjXgfPpTCbfJzhLJo10M7za2zANxAc");
 
         #endregion
 
@@ -24,46 +25,76 @@ namespace CafeSystem.TelegramClient
         {
             Computers = pcs;
             Users = users;
-            client.OnMessage += Client_OnMessage;
-            client.OnCallbackQuery += Client_OnCallbackQuery;
-            client.StartReceiving();
+            TgClient.OnMessage += TgClientOnMessage;
+            TgClient.OnCallbackQuery += TgClientOnCallbackQuery;
+            TgClient.StartReceiving();
             LogBox.Log("Telegram клиент запущен!\n" +
                        "(при отсутствии интернет соединения telegram клиент будет в режиме ожидания)");
         }
 
-        public override List<Computer> Computers { get; set; }
-        public override List<User> Users { get; set; }
-        public override List<Reservation> Reservations { get; set; }
-
-        private void Client_OnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        private void TgClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
-            
-
             switch (e.CallbackQuery.Data)
             {
+                case "PCS":
+                    var freePCs = GetFreePCs();
+                    var buttons = new InlineKeyboardButton[freePCs.Count];
+                    for (var i = 0; i < buttons.Length; i++)
+                        buttons[i] = InlineKeyboardButton.WithCallbackData(freePCs[i].Name);
+
+                    TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой ПК:",
+                        ParseMode.Default, false, false, 0,
+                        new InlineKeyboardMarkup(buttons));
+                    break;
                 default:
-                    client.SendTextMessageAsync(e.CallbackQuery.From.Id, "???");
-                    client.DeleteMessageAsync(e.CallbackQuery.From.Id, e.CallbackQuery.Message.MessageId);
+                    TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "???");
+
+                    TgClient.DeleteMessageAsync(e.CallbackQuery.From.Id, e.CallbackQuery.Message.MessageId);
                     break;
             }
         }
 
-        private void Client_OnMessage(object sender, MessageEventArgs e)
+        private void TgClientOnMessage(object sender, MessageEventArgs e)
         {
+            var username = e.Message.From.Username;
+            var userId = e.Message.Chat.Id;
+
             LogBox.Log(
-                $"Получено {e.Message.Type.ToString().ToLower()} от {e.Message.From.Username}: \"{e.Message.Text}\"");
+                $"Получено {e.Message.Type.ToString().ToLower()} от {username}: \"{e.Message.Text}\"");
             switch (e.Message.Text.ToLower())
             {
                 case "/start":
-                    client.SendTextMessageAsync(e.Message.Chat.Id,
-                        $"Привет, {e.Message.From.Username}!\nТвой ID: {e.Message.From.Id}.");
+                    if (GetUserById(userId) == null) //Если кто-то пишет впервые - записать в бд
+                    {
+                        var user = new User();
+                        user.Name = e.Message.From.Username;
+                        user.Perms = User.Permissions.User;
+                        user.UserId = userId;
+                        user.VisitedTime = 0;
+                        Users.Add(user);
+                        SaveUserData();
+
+                        TgClient.SendTextMessageAsync(e.Message.Chat.Id, $"Привет, {username}!\nТвой ID: {userId}.");
+                    }
+                    else
+                    {
+                        TgClient.SendTextMessageAsync(e.Message.Chat.Id,
+                            $"Вы уже зарегистрированы в системе, {username}.\nВаш идентификатор: {userId}.");
+                    }
+
                     break;
                 default:
-                    client.SendTextMessageAsync(e.Message.Chat.Id, "Незнакомая команда!",
+                    TgClient.SendTextMessageAsync(e.Message.Chat.Id, "Незнакомая команда!",
                         ParseMode.Markdown, false, false, e.Message.MessageId,
-                        new InlineKeyboardMarkup(InlineKeyboardButton.WithCallbackData($"{e.Message}", "pepega")));
+                        new InlineKeyboardMarkup(
+                            InlineKeyboardButton.WithCallbackData($"Кол-во доступных ПК {GetFreePCs().Count}", "PCS")));
                     break;
             }
+        }
+
+        public override List<Computer> GetFreePCs()
+        {
+            return Computers.Where(m => m.Reserved == false).ToList();
         }
     }
 }

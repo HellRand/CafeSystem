@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CafeSystem.Clients;
+using CafeSystem.Mechanics;
 using CafeSystem.Structure;
 using CafeSystem.TelegramClient;
 using CsvHelper;
@@ -23,9 +25,9 @@ namespace CafeSystem
             InitializeComponent();
             _users = new List<User>();
             _computers = new List<Computer>();
-            LogBox.RTB = richTextBox1;
+            LogBox.Rtb = richTextBox1;
 
-            
+            Client tgClient = new TelegramBot(_computers, _users);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -81,8 +83,6 @@ namespace CafeSystem
 
             //var bot = new TelegramBot();
             metroLabel1.Hide();
-
-            
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -131,8 +131,8 @@ namespace CafeSystem
 
         private void SaveLogsButton_Click(object sender, EventArgs e)
         {
-            string text = richTextBox1.Text;
-            if (text == String.Empty)
+            var text = richTextBox1.Text;
+            if (text == string.Empty)
             {
                 MessageBox.Show("Журнал пустой, нечего сохранять!");
                 return;
@@ -142,12 +142,11 @@ namespace CafeSystem
             {
                 File.WriteAllText($"Лог_{DateTime.Now.ToFileTime()}.txt", text);
 
-                LogBox.RTB.BeginInvoke(new MethodInvoker(() => { LogBox.RTB.Text = String.Empty; }));
+                LogBox.Rtb.BeginInvoke(new MethodInvoker(() => { LogBox.Rtb.Text = string.Empty; }));
 
-                LogBox.Log("Лог файл сохранён успешно!", LogBox.LogType.Succes);
+                LogBox.Log("Лог файл сохранён успешно!", LogBox.LogType.Success);
                 MessageBox.Show("Лог файл сохранён успешно!");
             });
         }
-
     }
 }

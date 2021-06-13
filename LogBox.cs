@@ -6,58 +6,63 @@ namespace CafeSystem
 {
     public static class LogBox
     {
+        /// <summary>
+        ///     Тип логгирования, иначе говоря - цвет сообщения в журнале событий
+        /// </summary>
         public enum LogType
         {
-            Log,
-            Warning,
-            Error,
-            Succes
+            Log, // Обычный - без цвета.
+            Warning, // Предупреждение - жёлтый.
+            Error, // Ошибка - красный.
+            Success // "Успешно" - зелёный.
         }
 
-        public static RichTextBox RTB { get; set; }
+        public static RichTextBox Rtb { get; set; }
 
         //public LogBox(RichTextBox textBox) => RTB = textBox;
 
         public static void Log(string message, LogType type = LogType.Log)
         {
-            RTB.BeginInvoke(new MethodInvoker(() =>
+            string currTime; // Текущее время
+            Color currColor; // Текущий цвет (если вдруг цвет шрифта в richTextBox изменится)
+            Rtb.BeginInvoke(new MethodInvoker(() =>
             {
-                var currTime = DateTime.Now.ToString("dd/MM HH:mm:ss");
+                currTime = DateTime.Now.ToString("dd/MM HH:mm:ss");
 
-                RTB.SelectionStart = RTB.TextLength;
-                RTB.SelectionLength = message.Length;
-                var currColor = RTB.ForeColor;
+                Rtb.SelectionStart = Rtb.TextLength;
+                Rtb.SelectionLength = message.Length;
+                currColor = Rtb.ForeColor;
 
                 switch (type)
                 {
                     case LogType.Log:
-                        RTB.BeginInvoke(new Action(() => { RTB.AppendText($"[{currTime}] {message}\n"); }));
+                        Rtb.BeginInvoke(new Action(() => { Rtb.AppendText($"[{currTime}] {message}\n"); }));
                         break;
 
                     case LogType.Warning:
-                        RTB.BeginInvoke(new Action(() =>
+                        Rtb.BeginInvoke(new Action(() =>
                         {
-                            RTB.SelectionColor = Color.DarkOrange;
-                            RTB.AppendText($"[{currTime}] {message}\n");
-                            RTB.SelectionColor = currColor;
+                            Rtb.SelectionColor = Color.DarkOrange;
+                            Rtb.AppendText($"[{currTime}] {message}\n");
+                            Rtb.SelectionColor = currColor;
                         }));
                         break;
 
                     case LogType.Error:
-                        RTB.BeginInvoke(new Action(() =>
+                        Rtb.BeginInvoke(new Action(() =>
                         {
-                            RTB.SelectionColor = Color.Red;
-                            RTB.AppendText($"[{currTime}] {message}\n");
-                            RTB.SelectionColor = currColor;
+                            Rtb.SelectionColor = Color.Red;
+                            Rtb.AppendText($"[{currTime}] {message}\n");
+                            Rtb.SelectionColor = currColor;
                         }));
                         break;
 
-                    case LogType.Succes:
-                        RTB.BeginInvoke(new Action(() =>
+                    case LogType.Success:
+                        Rtb.BeginInvoke(new Action(() =>
                         {
-                            RTB.SelectionColor = Color.Green;
-                            RTB.AppendText($"[{currTime}] {message}\n");
-                            RTB.SelectionColor = currColor;
+                            Rtb.SelectionColor = Color.Green;
+                            Rtb.AppendText($"[{currTime}] {message}\n");
+                            Rtb.SelectionColor = currColor;
                         }));
                         break;
                 }
