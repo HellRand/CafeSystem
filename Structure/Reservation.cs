@@ -15,22 +15,25 @@ namespace CafeSystem.Structure
         internal Computer ReservedPC;
         internal User User;
 
-        public Reservation(TimeSpan duration)
+        public Reservation(TimeSpan duration, Computer pc)
         {
             Duration = duration;
             StartTime = DateTime.Now;
             EndTime = StartTime + Duration;
             Remaining = Duration;
+            ReservedPC = pc;
 
             CheckLoop();
         }
         
-        public Reservation(DateTime from, TimeSpan duration)
+        public Reservation(DateTime from, TimeSpan duration, Computer pc)
         {
             Duration = duration;
             StartTime = from;
             EndTime = StartTime + Duration;
             Remaining = Duration;
+            ReservedPC = pc;
+            
 
             CheckLoop();
         }
@@ -47,9 +50,13 @@ namespace CafeSystem.Structure
 
         private async Task CheckLoop()
         {
+            
             await Task.Run(() =>
             {
-                
+                if (ReservedPC.Reserved)
+                {
+                    LogBox.Log($"");
+                }
                 //Status = Status.Waiting;
                 while (StartTime > DateTime.Now) Thread.Sleep(1000);
 

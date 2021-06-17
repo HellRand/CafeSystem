@@ -5,6 +5,7 @@ using CafeSystem.Mechanics;
 using CafeSystem.Structure;
 using Telegram.Bot;
 using Telegram.Bot.Args;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -22,7 +23,7 @@ namespace CafeSystem.Clients
 
         #endregion
 
-        public TelegramBot(List<Computer> pcs, List<User> users) : base(pcs, users)
+        public TelegramBot(List<Computer> pcs, List<Structure.User> users) : base(pcs, users)
         {
             Computers = pcs;
             Users = users;
@@ -43,7 +44,8 @@ namespace CafeSystem.Clients
         private void TgClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             string msg = e.CallbackQuery.Data;
-            
+            Message ChoseMsg = null;
+
             switch (msg)
             {
                 case "PCS":
@@ -56,42 +58,44 @@ namespace CafeSystem.Clients
                     }
                     var keyboard = new InlineKeyboardMarkup(buttons);
 
-                    TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой ПК:", ParseMode.Default, false, false, 0, keyboard);
+                    ChoseMsg = TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой компьютер:", ParseMode.Default, false, false, 0, keyboard).Result;
                     return;
                 default:
-                    
-                    break;
+                    return;
             }
 
             var selectedPc = GetComputerByName(msg);
-            User curUser = GetUserById(e.CallbackQuery.Message.Chat.Id);
+            Structure.User curUser = GetUserById(e.CallbackQuery.Message.Chat.Id);
             if (selectedPc != null && curUser != null)
             {
-                
-                Reservation reservation = new Reservation(TimeSpan.FromSeconds(5));
-
+                TgClient.DeleteMessageAsync(e.CallbackQuery.From.Id, ChoseMsg.MessageId);
+                Reservation reservation = new Reservation(TimeSpan.FromSeconds(5), selectedPc);
                 selectedPc.User = curUser;
                 reservation.User = curUser;
 
-                reservation.ReservedPC = selectedPc;
+                ReserveComputer(selectedPc, reservation);
                 TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, $"Вы забронировали компьютер: \"{selectedPc}\".\n" + 
                                                                        $"Детали брони: {reservation}.");
                 reservation.On_ReservationEnded += (res, pc) =>
                 {
                     TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования истекло.\nСуммарное время бронирования, всего: {pc.User.VisitedTime}сек.");
                 };
-                ReserveComputer(selectedPc, reservation);
+                
             } else { TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Вероятно, что-то пошло не так. Введите /start чтобы попробовать ещё раз."); }
             
         }
 
         private void TgClientOnMessage(object sender, MessageEventArgs e)
         {
-            var username = e.Message.From.Username;
+            string username;
+            if (e.Message.From.Username != null) username = e.Message.From.Username;
+            else username = $"{e.Message.From.FirstName} {e.Message.From.LastName}";
+
+
             var userId = e.Message.Chat.Id;
 
             var currentUser = GetUserById(userId);
-            if (currentUser != null && currentUser.Name == String.Empty) currentUser.Name = e.Message.From.Username;
+            if (currentUser != null) currentUser.Name = username;
 
             LogBox.Log($"Сообщение (тип: {e.Message.Type.ToString().ToLower()}) от {username}: \"{e.Message.Text}\"");
             switch (e.Message.Text.ToLower())
@@ -100,27 +104,42 @@ namespace CafeSystem.Clients
                     
                     if (currentUser == null) //Если кто-то пишет впервые - записать в бд
                     {
-                        var user = new User();
-                        user.Name = e.Message.From.Username;
-                        user.Perms = User.Permissions.User;
+                        var user = new Structure.User();
+                        user.Name = username;
+                        user.Perms = Structure.User.Permissions.User;
                         user.UserId = userId;
                         user.VisitedTime = 0;
                         Users.Add(user);
                         SaveUserData();
 
-                        TgClient.SendTextMessageAsync(e.Message.Chat.Id, $"Привет, {username}!\nТвой ID: {userId}.");
+                        TgClient.SendTextMessageAsync(userId, $"Привет, {username}!\nТвой ID: {userId}.");
                     }
                     else
                     {
-                        TgClient.SendTextMessageAsync(e.Message.Chat.Id, $"Вы уже зарегистрированы в системе, {username}.\nВаш идентификатор: {userId}.");
+                        TgClient.SendTextMessageAsync(userId, $"Вы уже зарегистрированы в системе, {username}.\nВаш идентификатор: {userId}.");
                     }
 
                     break;
-                default:
-                    TgClient.SendTextMessageAsync(e.Message.Chat.Id, "Неизвестная команда!",
+                case "/pcs":
+                    int pc_count = GetFreePCs().Count;
+                    if (pc_count == 0)
+                    {
+                        TgClient.SendTextMessageAsync(userId, "Увы, но все компьютеры заняты, повторите попытку чуть позднее.\nПросим прощения за причиненные неудобства.");
+                        return;
+                    }
+                    TgClient.SendTextMessageAsync(userId, "Забронировать?");
+                    TgClient.SendTextMessageAsync(userId, "Неизвестная команда!",
                         ParseMode.Markdown, false, false, e.Message.MessageId,
                         new InlineKeyboardMarkup(
                             InlineKeyboardButton.WithCallbackData($"Кол-во доступных ПК {GetFreePCs().Count}", "PCS")));
+                    break;
+                case "/me":
+                    TgClient.SendTextMessageAsync(userId, $"{currentUser.Name}\n" +
+                        $"Ваш ID: {currentUser.UserId}\n" +
+                        $"{Math.Round(currentUser.VisitedTime/60, 2)}");
+                    break;
+                default:
+                    
                     break;
             }
         }

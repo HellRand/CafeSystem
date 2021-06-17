@@ -45,6 +45,7 @@ namespace CafeSystem
             this.metroLabel2 = new MetroFramework.Controls.MetroLabel();
             this.button2 = new MetroFramework.Controls.MetroButton();
             this.button1 = new MetroFramework.Controls.MetroButton();
+            this.metroChangeButton = new MetroFramework.Controls.MetroButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -63,10 +64,10 @@ namespace CafeSystem
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(760, 370);
             this.tabControl1.TabIndex = 0;
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.metroChangeButton);
             this.tabPage1.Controls.Add(this.metroRadioButton2);
             this.tabPage1.Controls.Add(this.metroRadioButton1);
             this.tabPage1.Controls.Add(this.metroLabel1);
@@ -213,6 +214,16 @@ namespace CafeSystem
             this.button1.UseSelectable = true;
             this.button1.Click += new System.EventHandler(this.ShowComputersDatabase_Click);
             // 
+            // metroChangeButton
+            // 
+            this.metroChangeButton.Location = new System.Drawing.Point(567, 287);
+            this.metroChangeButton.Name = "metroChangeButton";
+            this.metroChangeButton.Size = new System.Drawing.Size(182, 47);
+            this.metroChangeButton.TabIndex = 4;
+            this.metroChangeButton.Text = "Изменить";
+            this.metroChangeButton.UseSelectable = true;
+            this.metroChangeButton.Click += new System.EventHandler(this.metroChangeButton_Click);
+            // 
             // MainForm
             // 
             this.ApplyImageInvert = true;
@@ -259,6 +270,7 @@ namespace CafeSystem
         private MetroFramework.Controls.MetroButton SaveLogsButton;
         private MetroFramework.Controls.MetroRadioButton metroRadioButton2;
         private MetroFramework.Controls.MetroRadioButton metroRadioButton1;
+        private MetroFramework.Controls.MetroButton metroChangeButton;
     }
 }
 

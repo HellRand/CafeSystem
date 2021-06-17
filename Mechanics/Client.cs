@@ -99,7 +99,7 @@ namespace CafeSystem.Mechanics
                 csv.Context.RegisterClassMap<UserMap>();
 
                 await csv.WriteRecordsAsync(Users);
-                LogBox.Log("Список пользователей сохранён успешно!", LogBox.LogType.Success);
+                LogBox.Log($"Список пользователей обновлён успешно! (Кол-во пользователей: {Users.Count})", LogBox.LogType.Success);
             }
         }
 

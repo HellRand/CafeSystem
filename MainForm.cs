@@ -20,6 +20,11 @@ namespace CafeSystem
         private static List<User> _users;
         private static List<Computer> _computers;
 
+        //Переменные нужны для запоминания кол-ва пользователей/компьютеров,
+        //чтобы лишний раз не пересохранять данные
+        private int ComputersCount;
+        private int UsersCount; 
+ 
         public MainForm()
         {
             InitializeComponent();
@@ -229,6 +234,7 @@ namespace CafeSystem
             metroComboBox1.Items.AddRange(_computers.ToArray());
         }
 
+        //Кнопка "показ пользователей"
         private void metroRadioButton2_CheckedChanged(object sender, EventArgs e)
         {
             if (!metroRadioButton2.Checked) return;
@@ -238,11 +244,20 @@ namespace CafeSystem
             metroComboBox1.Items.AddRange(_users.ToArray());
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        private void metroChangeButton_Click(object sender, EventArgs e)
         {
-
+            if (metroComboBox1.SelectedIndex == -1)
+            {
+                MessageBox.Show("Сначала выберите элемент в выпадающем списке!", "Внимание", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;            
+            }
+            if (metroRadioButton2.Checked)
+            {
+                ChangeUserForm form = new ChangeUserForm(metroComboBox1.SelectedItem as User);
+                form.ShowDialog();
+                
+            }
+            
         }
-
-        
     }
 }
