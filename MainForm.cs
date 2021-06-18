@@ -23,8 +23,11 @@ namespace CafeSystem
         //Переменные нужны для запоминания кол-ва пользователей/компьютеров,
         //чтобы лишний раз не пересохранять данные
         private int ComputersCount;
-        private int UsersCount; 
- 
+        private int UsersCount;
+
+        Client tgClient;
+
+
         public MainForm()
         {
             InitializeComponent();
@@ -32,7 +35,7 @@ namespace CafeSystem
             _computers = new List<Computer>();
             LogBox.Rtb = richTextBox1;
 
-            Client tgClient = new TelegramBot(_computers, _users);
+            tgClient = new TelegramBot(_computers, _users);
         }
 
         private void MainForm_Load(object sender, EventArgs e)

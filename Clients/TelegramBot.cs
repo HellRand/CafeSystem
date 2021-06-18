@@ -11,15 +11,14 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CafeSystem.Clients
 {
-    internal sealed class TelegramBot : Client
+    public class TelegramBot : Client
     {
         #region SecretKey
 
         /// <summary>
         ///     Токен
         /// </summary>
-        private readonly TelegramBotClient TgClient =
-            new TelegramBotClient("1800173075:AAFy3ZjXgfPpTCbfJzhLJo10M7za2zANxAc");
+        public TelegramBotClient TgClient { get; private set; } = new TelegramBotClient("1800173075:AAFy3ZjXgfPpTCbfJzhLJo10M7za2zANxAc");
 
         #endregion
 
@@ -44,7 +43,6 @@ namespace CafeSystem.Clients
         private void TgClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             string msg = e.CallbackQuery.Data;
-            Message ChoseMsg = null;
 
             switch (msg)
             {
@@ -58,18 +56,17 @@ namespace CafeSystem.Clients
                     }
                     var keyboard = new InlineKeyboardMarkup(buttons);
 
-                    ChoseMsg = TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой компьютер:", ParseMode.Default, false, false, 0, keyboard).Result;
+                    TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Выберите любой компьютер:", ParseMode.Default, false, false, 0, keyboard);
                     return;
                 default:
-                    return;
+                    break;
             }
 
             var selectedPc = GetComputerByName(msg);
             Structure.User curUser = GetUserById(e.CallbackQuery.Message.Chat.Id);
             if (selectedPc != null && curUser != null)
             {
-                TgClient.DeleteMessageAsync(e.CallbackQuery.From.Id, ChoseMsg.MessageId);
-                Reservation reservation = new Reservation(TimeSpan.FromSeconds(5), selectedPc);
+                Reservation reservation = new Reservation(TimeSpan.FromSeconds(30), selectedPc);
                 selectedPc.User = curUser;
                 reservation.User = curUser;
 
@@ -78,7 +75,7 @@ namespace CafeSystem.Clients
                                                                        $"Детали брони: {reservation}.");
                 reservation.On_ReservationEnded += (res, pc) =>
                 {
-                    TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования истекло.\nСуммарное время бронирования, всего: {pc.User.VisitedTime}сек.");
+                    TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования \"{pc.Name}\" истекло.\nСуммарное время бронирования, всего: {Math.Round(pc.User.VisitedTime)}сек.");
                 };
                 
             } else { TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Вероятно, что-то пошло не так. Введите /start чтобы попробовать ещё раз."); }
@@ -138,16 +135,31 @@ namespace CafeSystem.Clients
                         TgClient.SendTextMessageAsync(userId, "Увы, но все компьютеры заняты, повторите попытку чуть позднее.\nПросим прощения за причиненные неудобства.");
                         return;
                     }
-                    TgClient.SendTextMessageAsync(userId, "Забронировать?");
-                    TgClient.SendTextMessageAsync(userId, "Неизвестная команда!",
+                    TgClient.SendTextMessageAsync(userId, "Выберите любой ПК для бронирования:",
                         ParseMode.Markdown, false, false, e.Message.MessageId,
                         new InlineKeyboardMarkup(
-                            InlineKeyboardButton.WithCallbackData($"Кол-во доступных ПК {GetFreePCs().Count}", "PCS")));
+                            InlineKeyboardButton.WithCallbackData($"Забронировать компьютер (свободных ПК {GetFreePCs().Count})", "PCS")));
                     break;
                 case "/me":
-                    TgClient.SendTextMessageAsync(userId, $"{currentUser.Name}\n" +
+                    TgClient.SendTextMessageAsync(userId, $"Инфо о {currentUser.Name}\n" +
                         $"Ваш ID: {currentUser.UserId}\n" +
-                        $"{Math.Round(currentUser.VisitedTime/60, 2)}");
+                        $"Общее время бронирования: {Math.Round(currentUser.VisitedTime/60, 1)} мин.\n" +
+                        $"Уровень доступа: {currentUser.PermToStr()}");
+                    if (currentUser.Perms == Structure.User.Permissions.Owner)
+                    {
+                        int freePcs = GetFreePCs().Count;
+                        TgClient.SendTextMessageAsync(userId, $"Свободных ПК: {freePcs}\n" +
+                                                              $"Зарезервированных ПК: {Computers.Count - freePcs}");
+                        var reserved = Computers.Where(m => m.Reserved == true).ToList();
+                        string show = "";
+                        for (int i = 0; i < reserved.Count; i++)
+                        {
+                            show += $"{i+1}) {reserved[i].Name} забронирован пользователем {reserved[i].User.Name}.\n" +
+                                    $"Данные о брони: {reserved[i].Reservation}\n" +
+                                    $"Цена услуги: {Math.Round(reserved[i].PricePerHour * reserved[i].Reservation.Duration.TotalHours, 2)}руб.\n\n";
+                        }
+                        TgClient.SendTextMessageAsync(userId, show);
+                    }
                     break;
                 default:
                     
