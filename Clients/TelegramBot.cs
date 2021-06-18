@@ -95,9 +95,20 @@ namespace CafeSystem.Clients
             var userId = e.Message.Chat.Id;
 
             var currentUser = GetUserById(userId);
-            if (currentUser != null) currentUser.Name = username;
+            if (currentUser == null) //Если кто-то пишет впервые - записать в бд
+            {
+                var user = new Structure.User();
+                user.Name = username;
+                user.Perms = Structure.User.Permissions.User;
+                user.UserId = userId;
+                user.VisitedTime = 0;
+                Users.Add(user);
+                SaveUserData();
+            }
+            else currentUser.Name = username; //Перезаписать имя пользователя, если тот его изменил
+            
 
-            LogBox.Log($"Сообщение (тип: {e.Message.Type.ToString().ToLower()}) от {username}: \"{e.Message.Text}\"");
+                LogBox.Log($"Сообщение (тип: {e.Message.Type.ToString().ToLower()}) от {username}: \"{e.Message.Text}\"");
             switch (e.Message.Text.ToLower())
             {
                 case "/start":

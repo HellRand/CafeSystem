@@ -12,6 +12,8 @@ namespace CafeSystem
     public partial class ChangeUserForm : Form
     {
         User User;
+        User.Permissions Permissions;
+
         public ChangeUserForm(User user)
         {
             User = user;
@@ -33,6 +35,7 @@ namespace CafeSystem
                 case User.Permissions.User: comboBox1.SelectedIndex = 2;
                     break;
             }
+            Permissions = User.Perms;
         }
 
         private void button_Save_Click(object sender, EventArgs e)
@@ -56,6 +59,7 @@ namespace CafeSystem
                     User.Perms = User.Permissions.Owner;
                     break;
             }
+            LogBox.Log($"Обновлён уровень доступа {User.Name} с \"{Permissions}\" на \"{User.Perms}\"", LogBox.LogType.Warning);
         }
 
         private void ChangeUserForm_FormClosing(object sender, FormClosingEventArgs e)

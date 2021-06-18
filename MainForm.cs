@@ -88,7 +88,10 @@ namespace CafeSystem
             }
 
             #endregion
-            
+
+            ComputersCount = _computers.Count;
+            UsersCount = _users.Count;
+
             // Заносит пк в список объектов
             metroComboBox1.Items.AddRange(_computers.ToArray());
 
@@ -118,18 +121,23 @@ namespace CafeSystem
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             #region Сохранение списка ПК и Пользователей в CSV
-
-            using (var writer = new StreamWriter("Computers.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            if (_computers.Count != ComputersCount)
             {
-                csv.Context.RegisterClassMap<ComputerMap>();
-                csv.WriteRecords(_computers);
+                using (var writer = new StreamWriter("Computers.csv"))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<ComputerMap>();
+                    csv.WriteRecords(_computers);
+                }
             }
-            using (var writer = new StreamWriter("Users.csv"))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            if (_users.Count != UsersCount)
             {
-                csv.Context.RegisterClassMap<UserMap>();
-                csv.WriteRecords(_users);
+                using (var writer = new StreamWriter("Users.csv"))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<UserMap>();
+                    csv.WriteRecords(_users);
+                }
             }
 
             #endregion
@@ -228,7 +236,7 @@ namespace CafeSystem
         private void metroRadioButton1_CheckedChanged(object sender, EventArgs e)
         {
             if (!metroRadioButton1.Checked) return;
-            metroLabel1.Text = "";
+            metroLabel1.Text = "Выберите элемент из списка...";
 
             metroComboBox1.Items.Clear();
             metroComboBox1.Items.AddRange(_computers.ToArray());
@@ -244,6 +252,7 @@ namespace CafeSystem
             metroComboBox1.Items.AddRange(_users.ToArray());
         }
 
+        //Кнопка "Изменить"
         private void metroChangeButton_Click(object sender, EventArgs e)
         {
             if (metroComboBox1.SelectedIndex == -1)
@@ -254,10 +263,23 @@ namespace CafeSystem
             if (metroRadioButton2.Checked)
             {
                 ChangeUserForm form = new ChangeUserForm(metroComboBox1.SelectedItem as User);
+                form.FormClosing += Form_FormClosing;
                 form.ShowDialog();
-                
             }
             
+        }
+
+        //Когда форма изменения уровня доступа пользователя закрывается
+        private void Form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            using (var writer = new StreamWriter("Users.csv"))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<UserMap>();
+                csv.WriteRecords(_users);
+            }
+            metroComboBox1.Items.Clear();
+            metroComboBox1.Items.AddRange(_users.ToArray());
         }
     }
 }
