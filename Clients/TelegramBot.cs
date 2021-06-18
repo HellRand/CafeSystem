@@ -71,18 +71,20 @@ namespace CafeSystem.Clients
                     TgClient.SendTextMessageAsync(curUser.UserId, $"Просим прощения, но \"{selectedPc.Name}\" уже зарезервирован.\n Попробуйте выбрать другой пк.");
                     return;
                 }
-                Reservation reservation = new Reservation(TimeSpan.FromSeconds(30), selectedPc);
+                Reservation reservation = new Reservation(TimeSpan.FromSeconds(20), selectedPc);
+                
                 selectedPc.User = curUser;
                 reservation.User = curUser;
 
                 ReserveComputer(selectedPc, reservation);
-                TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, $"Вы забронировали компьютер: \"{selectedPc}\".\n" + 
-                                                                       $"Детали брони: {reservation}.");
                 reservation.On_ReservationEnded += (res, pc) =>
                 {
                     TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования \"{pc.Name}\" истекло.\nСуммарное время бронирования, всего: {Math.Round(pc.User.VisitedTime / 60, 1)}мин.");
+                    LogBox.Log($"Время бронирования \"{pc.Name}\" истекло. Заказчик -> {pc.User.Name}", LogBox.LogType.Warning);
                 };
-                
+                TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, $"Вы забронировали компьютер: \"{selectedPc}\".\n" + 
+                                                                       $"Детали брони: {reservation}.");
+
             } else { TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Вероятно, что-то пошло не так. Введите /start чтобы попробовать ещё раз."); }
             
         }
