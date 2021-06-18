@@ -66,6 +66,11 @@ namespace CafeSystem.Clients
             Structure.User curUser = GetUserById(e.CallbackQuery.Message.Chat.Id);
             if (selectedPc != null && curUser != null)
             {
+                if (selectedPc.Reserved)
+                {
+                    TgClient.SendTextMessageAsync(curUser.UserId, $"Просим прощения, но \"{selectedPc.Name}\" уже зарезервирован.\n Попробуйте выбрать другой пк.");
+                    return;
+                }
                 Reservation reservation = new Reservation(TimeSpan.FromSeconds(30), selectedPc);
                 selectedPc.User = curUser;
                 reservation.User = curUser;
@@ -75,7 +80,7 @@ namespace CafeSystem.Clients
                                                                        $"Детали брони: {reservation}.");
                 reservation.On_ReservationEnded += (res, pc) =>
                 {
-                    TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования \"{pc.Name}\" истекло.\nСуммарное время бронирования, всего: {Math.Round(pc.User.VisitedTime)}сек.");
+                    TgClient.SendTextMessageAsync(pc.User.UserId, $"Время бронирования \"{pc.Name}\" истекло.\nСуммарное время бронирования, всего: {Math.Round(pc.User.VisitedTime / 60, 1)}мин.");
                 };
                 
             } else { TgClient.SendTextMessageAsync(e.CallbackQuery.From.Id, "Вероятно, что-то пошло не так. Введите /start чтобы попробовать ещё раз."); }
